@@ -1,8 +1,8 @@
 import { createApp } from "vue";
 import { createPinia } from "pinia";
-import App from "./App.vue";
+import Editor from "./Editor.vue";
 
-const app = createApp(App);
+const app = createApp(Editor);
 
 app.use(createPinia());
 

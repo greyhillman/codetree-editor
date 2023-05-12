@@ -23,7 +23,6 @@ export const useNodeStore = (id: string) =>
     function add_child() {
       const store = useNodeStore(new_id());
 
-      store.value = store.$id;
       store.parent = id;
 
       const prev_sibling =
@@ -38,11 +37,11 @@ export const useNodeStore = (id: string) =>
       }
 
       children.value.push(store.$id);
+
+      return store;
     }
 
-    function remove_child(id: string) {
-      const index = children.value.findIndex((child) => child === id);
-
+    function remove_child(index: number) {
       children.value.splice(index, 1);
     }
 
