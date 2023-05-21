@@ -52,14 +52,4 @@ onMounted(() => {
   </main>
 </template>
 
-<style>
-.selected {
-  outline: 2px solid orange;
-}
-
-main {
-  font-family: 'Courier New', Courier, monospace;
-  border: solid 2px black;
-  padding: 0.5em;
-}
-</style>
+<style lang="scss" src="./assets/main.scss"></style>
