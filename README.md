@@ -1,4 +1,4 @@
-# viey-editor
+# CodeTree Editor
 
 An experimental AST editor & format.
 
