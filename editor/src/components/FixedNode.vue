@@ -25,6 +25,11 @@ while (store.children.length < props.value.nodes.length) {
     store.add_child();
 }
 
+console.log("Current children:");
+console.log(store.children.length);
+console.log("Expected children");
+console.log(props.value.nodes.length);
+
 const classes = computed(() => {
     return {
         'selected': selection.value === props.store,
@@ -51,8 +56,6 @@ const keydown = (event: KeyboardEvent) => {
         }
     }
 }
-
-const language = useLanguage();
 </script>
 
 <template>
@@ -60,7 +63,7 @@ const language = useLanguage();
         <header>Fixed: {{ props.value.name }} ({{ store.$id }})</header>
         <ol>
             <li v-for="(grammar_type, index) in props.value.nodes" :key="index">
-                <GrammarNode :store="store.children[index]" :value="language.grammar[grammar_type]" />
+                <GrammarNode :store="store.children[index]" :type="grammar_type" />
             </li>
         </ol>
     </section>

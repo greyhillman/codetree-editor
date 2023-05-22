@@ -4,17 +4,33 @@ import FixedNode from './FixedNode.vue';
 import LiteralNode from './LiteralNode.vue';
 import MultipleNode from './MultipleNode.vue';
 import type { GrammarNode } from '@/grammar';
+import { useLanguage } from '@/stores/language';
+import { computed } from 'vue';
 
 const props = defineProps<{
     store: string;
-    value: GrammarNode;
+    type: string;
 }>();
+
+const language = useLanguage();
+
+const node = computed(() => language.grammar[props.type]);
+
+const error = computed(() => {
+    if (!(props.type in language.grammar)) {
+        return true;
+    }
+    return false;
+});
 
 </script>
 
 <template>
-    <ChoiceNode v-if="props.value.type === 'Choice'" :store="props.store" :value="props.value" />
-    <FixedNode v-if="props.value.type === 'Fixed'" :store="props.store" :value="props.value" />
-    <LiteralNode v-if="props.value.type === 'Literal'" :store="props.store" :value="props.value" />
-    <MultipleNode v-if="props.value.type === 'Multiple'" :store="props.store" :value="props.value" />
+    <div class="error" v-if="error">
+        <p>Invalid grammar: missing node {{ props.type }}</p>
+    </div>
+    <ChoiceNode v-if="node && node.type === 'Choice'" :store="props.store" :value="node" />
+    <FixedNode v-if="node && node.type === 'Fixed'" :store="props.store" :value="node" />
+    <LiteralNode v-if="node && node.type === 'Literal'" :store="props.store" :value="node" />
+    <MultipleNode v-if="node && node.type === 'Multiple'" :store="props.store" :value="node" />
 </template>

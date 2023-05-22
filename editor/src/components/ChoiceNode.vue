@@ -97,6 +97,6 @@ const language = useLanguage();
         <select v-model="tree.value" ref="input">
             <option v-for="choice in props.value.choices" :value="choice">{{ choice }}</option>
         </select>
-        <GrammarNode v-if="tree.value" :store="tree.children[0]" :value="language.grammar[tree.value]" />
+        <GrammarNode v-if="tree.value" :store="tree.children[0]" :type="tree.value" />
     </section>
 </template>

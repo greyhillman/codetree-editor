@@ -55,8 +55,6 @@ const keydown = (event: KeyboardEvent) => {
         }
     }
 }
-
-const language = useLanguage();
 </script>
 
 <template>
@@ -64,7 +62,7 @@ const language = useLanguage();
         <header>Multiple: {{ props.value.name }} ({{ tree.$id }})</header>
         <ol>
             <li v-for="(child, index) in tree.children" :key="child">
-                <GrammarNode :store="child" :value="language.grammar[props.value.sequence]" />
+                <GrammarNode :store="child" :type="props.value.sequence" />
             </li>
         </ol>
     </section>

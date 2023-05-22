@@ -3,7 +3,7 @@ const input_types = {
   number: "number",
 };
 
-const literal = (name: string, type: "string" | "number"): Literal => {
+export const literal = (name: string, type: "string" | "number"): Literal => {
   return {
     name,
     type: "Literal",
@@ -11,7 +11,7 @@ const literal = (name: string, type: "string" | "number"): Literal => {
   };
 };
 
-const choice = (name: string, options: string[]): Choice => {
+export const choice = (name: string, options: string[]): Choice => {
   return {
     name,
     type: "Choice",
@@ -19,7 +19,7 @@ const choice = (name: string, options: string[]): Choice => {
   };
 };
 
-const multiple = (name: string, type: string): Multiple => {
+export const multiple = (name: string, type: string): Multiple => {
   return {
     name,
     type: "Multiple",
@@ -27,7 +27,7 @@ const multiple = (name: string, type: string): Multiple => {
   };
 };
 
-const fixed = (name: string, nodes: string[]): Fixed => {
+export const fixed = (name: string, nodes: string[]): Fixed => {
   return {
     name,
     type: "Fixed",
@@ -61,33 +61,7 @@ export interface Fixed {
 
 export type GrammarNode = Literal | Choice | Multiple | Fixed;
 
-// JSON grammar: https://www.json.org/json-en.html
-const grammars = {
-  json: {
-    root: fixed("root", ["value"]),
-    object: multiple("object", "entry"),
-    array: multiple("array", "value"),
-    entry: fixed("entry", ["string", "value"]),
-    value: choice("value", [
-      "object",
-      "array",
-      "number",
-      "string",
-      "true",
-      "false",
-      "null",
-    ]),
-    number: literal("number", "number"),
-    string: literal("string", "string"),
-    true: fixed("true", []),
-    false: fixed("false", []),
-    null: fixed("null", []),
-  } as Grammar,
-} as Record<string, Grammar>;
-
-type Grammar = {
+export type Grammar = {
   root: GrammarNode;
   [key: string]: GrammarNode;
 };
-
-export { grammars };
