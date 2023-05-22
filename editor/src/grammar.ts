@@ -62,27 +62,32 @@ export interface Fixed {
 export type GrammarNode = Literal | Choice | Multiple | Fixed;
 
 // JSON grammar: https://www.json.org/json-en.html
-const grammar = {
-  root: fixed("root", ["value"]),
-  object: multiple("object", "entry"),
-  array: multiple("array", "value"),
-  entry: fixed("entry", ["string", "value"]),
-  value: choice("value", [
-    "object",
-    "array",
-    "number",
-    "string",
-    "true",
-    "false",
-    "null",
-  ]),
-  number: literal("number", "number"),
-  string: literal("string", "string"),
-  true: fixed("true", []),
-  false: fixed("false", []),
-  null: fixed("null", []),
-} as Grammar;
+const grammars = {
+  json: {
+    root: fixed("root", ["value"]),
+    object: multiple("object", "entry"),
+    array: multiple("array", "value"),
+    entry: fixed("entry", ["string", "value"]),
+    value: choice("value", [
+      "object",
+      "array",
+      "number",
+      "string",
+      "true",
+      "false",
+      "null",
+    ]),
+    number: literal("number", "number"),
+    string: literal("string", "string"),
+    true: fixed("true", []),
+    false: fixed("false", []),
+    null: fixed("null", []),
+  } as Grammar,
+} as Record<string, Grammar>;
 
-type Grammar = Record<string, GrammarNode>;
+type Grammar = {
+  root: GrammarNode;
+  [key: string]: GrammarNode;
+};
 
-export { grammar };
+export { grammars };

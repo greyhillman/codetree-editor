@@ -3,10 +3,10 @@ import type { Fixed } from '@/grammar';
 import { useEditMode } from '@/stores/mode';
 import { useNodeStore } from '@/stores/node';
 import GrammarNode from './GrammarNode.vue';
-import { grammar } from '@/grammar';
 import { computed, useCssModule } from 'vue';
 import { useSelection } from '@/stores/selection';
 import { useKeyboard } from '@/stores/keyboard';
+import { useLanguage } from '@/stores/language';
 
 const props = defineProps<{
     store: string;
@@ -51,6 +51,7 @@ const keydown = (event: KeyboardEvent) => {
     }
 }
 
+const language = useLanguage();
 </script>
 
 <template>
@@ -58,7 +59,7 @@ const keydown = (event: KeyboardEvent) => {
         <header>Fixed: {{ props.value.name }} ({{ store.$id }})</header>
         <ol>
             <li v-for="(grammar_type, index) in props.value.nodes" :key="index">
-                <GrammarNode :store="store.children[index]" :value="grammar[grammar_type]" />
+                <GrammarNode :store="store.children[index]" :value="language.grammar[grammar_type]" />
             </li>
         </ol>
     </section>

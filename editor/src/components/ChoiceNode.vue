@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { grammar, type Choice } from '@/grammar';
+import { type Choice } from '@/grammar';
 import { useEditMode } from '@/stores/mode';
 import { useNodeStore } from '@/stores/node';
 import GrammarNode from './GrammarNode.vue';
 import { computed, onMounted, vModelCheckbox, type Ref, ref } from 'vue';
 import { useSelection } from '@/stores/selection';
 import { useKeyboard } from '@/stores/keyboard';
+import { useLanguage } from '@/stores/language';
 
 const props = defineProps<{
     store: string;
@@ -86,6 +87,7 @@ const keydown = (event: KeyboardEvent) => {
     }
 }
 
+const language = useLanguage();
 </script>
 
 <template>
@@ -94,6 +96,6 @@ const keydown = (event: KeyboardEvent) => {
         <select v-model="tree.value" ref="input">
             <option v-for="choice in props.value.choices" :value="choice">{{ choice }}</option>
         </select>
-        <GrammarNode v-if="tree.value" :store="tree.children[0]" :value="grammar[tree.value]" />
+        <GrammarNode v-if="tree.value" :store="tree.children[0]" :value="language.grammar[tree.value]" />
     </section>
 </template>

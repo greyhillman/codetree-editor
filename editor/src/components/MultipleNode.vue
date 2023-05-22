@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { grammar, type Multiple } from '@/grammar';
+import { type Multiple } from '@/grammar';
 import { useNodeStore } from '@/stores/node';
 import GrammarNode from './GrammarNode.vue';
 import { computed, onMounted, useCssModule } from 'vue';
 import { useSelection } from '@/stores/selection';
 import { useEditMode } from '@/stores/mode';
 import { useKeyboard } from '@/stores/keyboard';
+import { useLanguage } from '@/stores/language';
 
 const props = defineProps<{
     store: string;
@@ -53,6 +54,8 @@ const keydown = (event: KeyboardEvent) => {
         }
     }
 }
+
+const language = useLanguage();
 </script>
 
 <template>
@@ -60,7 +63,7 @@ const keydown = (event: KeyboardEvent) => {
         <header>Multiple: {{ props.value.name }} ({{ tree.$id }})</header>
         <ol>
             <li v-for="(child, index) in tree.children" :key="child">
-                <GrammarNode :store="child" :value="grammar[props.value.sequence]" />
+                <GrammarNode :store="child" :value="language.grammar[props.value.sequence]" />
             </li>
         </ol>
     </section>
