@@ -6,6 +6,10 @@ main {
   font-family: 'Courier New', Courier, monospace;
   border: solid 2px black;
   padding: 0.5em;
+
+  * {
+    font-family: 'Courier New', Courier, monospace;
+  }
 }
 
 section.node > section.node {

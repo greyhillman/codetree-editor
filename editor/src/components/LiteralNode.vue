@@ -4,7 +4,7 @@ import { useKeyboard } from '@/stores/keyboard';
 import { useEditMode } from '@/stores/mode';
 import { useNodeStore } from '@/stores/node';
 import { useSelection } from '@/stores/selection';
-import { computed, onMounted, ref, vModelCheckbox, type Ref } from 'vue';
+import { computed, nextTick, onMounted, ref, vModelCheckbox, watchEffect, type Ref } from 'vue';
 
 const props = defineProps<{
     store: string;
@@ -23,22 +23,27 @@ const classes = computed(() => {
 });
 
 const input_ref: Ref<HTMLInputElement | null> = ref(null);
+const section_ref: Ref<HTMLElement | null> = ref(null);
 
-const handle_text_input = (event: KeyboardEvent) => {
-    console.log("Text input");
+const handle_input = (event: KeyboardEvent) => {
+    console.log("Literal input key event");
     console.log(event);
+
+    event.stopPropagation();
+    event.stopImmediatePropagation();
+
     if (event.key === 'Escape' || event.key === 'Enter') {
         mode.current = 'navigating';
+        nextTick(() => {
+            input_ref.value?.blur();
+            section_ref.value?.focus();
+        });
     }
 }
 
-const handle_number_input = (event: KeyboardEvent) => {
-    console.log("Number input");
-    console.log(event);
-    if (event.key === 'Escape' || event.key === 'Enter') {
-        mode.current = 'navigating';
-    }
-}
+const edit_enabled = computed(() => {
+    return selection.value === props.store && mode.current === 'editing';
+});
 
 const keydown = (event: KeyboardEvent) => {
     console.log("Literal key event");
@@ -59,24 +64,28 @@ const keydown = (event: KeyboardEvent) => {
 
         if (event.key === keyboard.edit.start) {
             mode.current = 'editing';
-            input_ref.value?.focus();
+            nextTick(() => {
+                event.preventDefault();
+                input_ref.value?.focus();
+            });
         }
     } else if (mode.current === 'editing') {
-
         if (event.key === keyboard.edit.stop) {
             mode.current = 'navigating';
+            nextTick(() => {
+                input_ref.value?.blur();
+                section_ref.value?.focus();
+            });
         }
     }
 }
 </script>
 
 <template>
-    <section :class="classes" @keydown="keydown" :id="`node-${store.$id}`" tabindex="0">
+    <section :class="classes" @keydown="keydown" :id="`node-${store.$id}`" tabindex="0" ref="section_ref">
         <header>Literal ({{ store.$id }})</header>
-        <span v-if="mode.current === 'navigating'">{{ store.value }}</span>
-        <input type="text" ref="input_ref" v-if="mode.current === 'editing' && props.value.value === 'string'"
-            v-model="store.value" @keydown="handle_text_input" />
-        <input type="number" ref="input_ref" v-if="mode.current === 'editing' && props.value.value === 'number'"
-            v-model="store.value" @keydown="handle_number_input" />
+
+        <input :disabled="!edit_enabled" :type="value.value" ref="input_ref" v-model="store.value"
+            @keydown="handle_input" />
     </section>
 </template>
