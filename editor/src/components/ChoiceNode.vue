@@ -5,6 +5,7 @@ import { useNodeStore } from '@/stores/node';
 import GrammarNode from './GrammarNode.vue';
 import { computed, onMounted, vModelCheckbox, type Ref, ref } from 'vue';
 import { useSelection } from '@/stores/selection';
+import { useKeyboard } from '@/stores/keyboard';
 
 const props = defineProps<{
     store: string;
@@ -14,6 +15,7 @@ const props = defineProps<{
 const tree = useNodeStore(props.store);
 const selection = useSelection();
 const mode = useEditMode();
+const keyboard = useKeyboard();
 
 if (!tree.value) {
     tree.value = props.value.choices[0];
@@ -29,28 +31,11 @@ while (tree.children.length > 1) {
 const classes = computed(() => {
     return {
         'selected': selection.value === props.store,
+        'node choice': true,
     };
 });
 
 const input: Ref<HTMLElement | null> = ref(null);
-
-onMounted(() => {
-    document.addEventListener("keydown", event => {
-        if (selection.value !== props.store) {
-            return;
-        }
-
-        console.log("Choice node key event");
-
-        event.preventDefault();
-
-        if (mode.current === 'editing') {
-            input.value?.focus();
-        } else if (mode.current === 'navigating') {
-            input.value?.blur();
-        }
-    });
-});
 
 const next_value = (current: string) => {
     const current_index = props.value.choices.findIndex(choice => choice === current);
@@ -69,13 +54,34 @@ const prev_value = (current: string) => {
 }
 
 const keydown = (event: KeyboardEvent) => {
-    event.preventDefault();
+    console.log("Choice key event");
+    console.log(event);
 
-    if (mode.current === 'editing') {
-        if (event.key === 'j') {
+    event.stopPropagation();
+
+    if (mode.current === 'navigating') {
+        if (event.key === keyboard.move.in) {
+            selection.move("in");
+        } else if (event.key === keyboard.move.out) {
+            selection.move("out");
+        } else if (event.key === keyboard.move.next) {
+            selection.move("next");
+        } else if (event.key === keyboard.move.prev) {
+            selection.move("prev");
+        }
+
+        if (event.key === keyboard.edit.start) {
+            mode.current = 'editing';
+        }
+    } else if (mode.current === 'editing') {
+        if (event.key === keyboard.move.next) {
             tree.value = next_value(tree.value);
-        } else if (event.key === 'k') {
+        } else if (event.key === keyboard.move.prev) {
             tree.value = prev_value(tree.value);
+        }
+
+        if (event.key === keyboard.edit.stop) {
+            mode.current = 'navigating';
         }
     }
 }
@@ -83,8 +89,11 @@ const keydown = (event: KeyboardEvent) => {
 </script>
 
 <template>
-    <select v-model="tree.value" :class="classes" ref="input" @keydown="keydown">
-        <option v-for="choice in props.value.choices" :value="choice">{{ choice }}</option>
-    </select>
-    <GrammarNode v-if="tree.value" :store="tree.children[0]" :value="grammar[tree.value]" />
+    <section :class="classes" @keydown="keydown" :id="`node-${tree.$id}`" tabindex="0">
+        <header>Choice ({{ tree.$id }})</header>
+        <select v-model="tree.value" ref="input">
+            <option v-for="choice in props.value.choices" :value="choice">{{ choice }}</option>
+        </select>
+        <GrammarNode v-if="tree.value" :store="tree.children[0]" :value="grammar[tree.value]" />
+    </section>
 </template>

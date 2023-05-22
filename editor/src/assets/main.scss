@@ -1,9 +1,30 @@
 .selected {
-  outline: 2px solid orange;
+  outline: 4px solid orange;
 }
 
 main {
   font-family: 'Courier New', Courier, monospace;
   border: solid 2px black;
   padding: 0.5em;
+}
+
+section.node > section.node {
+    margin-left: 1em;
+}
+
+section.node {
+    padding: 0.5em;
+    border: 2px solid black;
+
+    &.choice {
+        background-color: greenyellow;
+    }
+
+    &.fixed {
+        background-color: white;
+    }
+
+    &.multiple {
+        background-color: aqua;
+    }
 }

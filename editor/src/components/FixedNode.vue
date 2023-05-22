@@ -4,8 +4,9 @@ import { useEditMode } from '@/stores/mode';
 import { useNodeStore } from '@/stores/node';
 import GrammarNode from './GrammarNode.vue';
 import { grammar } from '@/grammar';
-import { computed } from 'vue';
+import { computed, useCssModule } from 'vue';
 import { useSelection } from '@/stores/selection';
+import { useKeyboard } from '@/stores/keyboard';
 
 const props = defineProps<{
     store: string;
@@ -14,6 +15,8 @@ const props = defineProps<{
 
 const store = useNodeStore(props.store);
 const selection = useSelection();
+const mode = useEditMode();
+const keyboard = useKeyboard();
 
 while (store.children.length > props.value.nodes.length) {
     store.remove_child(store.children.length - 1);
@@ -25,14 +28,34 @@ while (store.children.length < props.value.nodes.length) {
 const classes = computed(() => {
     return {
         'selected': selection.value === props.store,
+        'node fixed': true,
     }
 });
+
+const keydown = (event: KeyboardEvent) => {
+    console.log("Fixed key event");
+    console.log(event);
+
+    event.stopPropagation();
+
+    if (mode.current === 'navigating') {
+        if (event.key === keyboard.move.in) {
+            selection.move("in");
+        } else if (event.key === keyboard.move.out) {
+            selection.move("out");
+        } else if (event.key === keyboard.move.next) {
+            selection.move("next");
+        } else if (event.key === keyboard.move.prev) {
+            selection.move("prev");
+        }
+    }
+}
 
 </script>
 
 <template>
-    <section :class="classes">
-        <header>{{ props.value.name }}</header>
+    <section :class="classes" @keydown="keydown" :id="`node-${store.$id}`" tabindex="0">
+        <header>Fixed: {{ props.value.name }} ({{ store.$id }})</header>
         <ol>
             <li v-for="(grammar_type, index) in props.value.nodes" :key="index">
                 <GrammarNode :store="store.children[index]" :value="grammar[grammar_type]" />
