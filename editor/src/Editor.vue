@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue';
 import GrammarNode from './components/GrammarNode.vue';
-import { grammars } from './grammar';
 import { useLanguage } from './stores/language';
 import { useNodeStore } from './stores/node';
 
@@ -19,9 +17,10 @@ const language = useLanguage();
       <option value="json">JSON</option>
     </select>
   </p>
-  <main>
+  <main :lang="language.current">
     <GrammarNode :store="root.$id" :value="language.grammar['root']" />
   </main>
 </template>
 
 <style lang="scss" src="./assets/main.scss"></style>
+<style lang="scss" src="./assets/lang.json.scss"></style>

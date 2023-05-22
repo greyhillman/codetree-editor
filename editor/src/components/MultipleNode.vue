@@ -22,6 +22,7 @@ const classes = computed(() => {
     return {
         'selected': selection.value === props.store,
         'node multiple': true,
+        [props.value.name]: true,
     };
 });
 

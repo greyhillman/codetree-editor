@@ -33,6 +33,7 @@ const classes = computed(() => {
     return {
         'selected': selection.value === props.store,
         'node choice': true,
+        [props.value.name]: true,
     };
 });
 
